@@ -639,6 +639,9 @@ details[open] .pm::after{opacity:0}
   background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.35);color:#A7F3D0;font-size:.95rem;
 }
 .sent.show{display:flex;animation:fadeIn .5s var(--ease)}
+.sent.ko{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35);color:#FCA5A5}
+.sent.ko svg{color:#F87171}
+.btn[disabled]{opacity:.6;pointer-events:none}
 .sent svg{width:20px;height:20px;color:var(--ok);flex:none}
 
 .cinfo{display:grid;gap:12px}
@@ -1279,6 +1282,13 @@ footer .about{color:var(--fg-muted);font-size:.95rem;margin-top:16px;max-width:4
             Invia la richiesta
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </button>
+          <!-- trappola antispam: i bot compilano tutto, le persone non la vedono -->
+          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"
+                 style="position:absolute;left:-9999px" aria-hidden="true" />
+          <p class="sent ko" id="errore" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16.5v.01"/><circle cx="12" cy="12" r="9"/></svg>
+            <span></span>
+          </p>
           <p class="sent" id="sent" role="status">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             Richiesta ricevuta. Ti scriviamo entro 24 ore lavorative.
@@ -1564,23 +1574,68 @@ footer .about{color:var(--fg-muted);font-size:.95rem;margin-top:16px;max-width:4
     });
   });
 
-  form.addEventListener('submit', (e) => {
+  /* EmailJS. La chiave pubblica sta per forza qui in chiaro: è pensata per essere
+     pubblica, e si protegge limitando i domini in Account → Security. */
+  const EMAILJS = {
+    servizio: 'service_t060r7s',
+    template: 'template_kcs0qrk',
+    chiave:   'Uk8xcFa3VjvjRAgAQ'
+  };
+
+  const errore = $('#errore'), bottone = form.querySelector('button[type=submit]');
+  const etichetta = bottone.innerHTML;
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    errore.classList.remove('show');
+
+    // prima si marcano i campi, poi si guarda il consenso: così con il modulo
+    // vuoto si vedono tutti gli errori insieme, non uno alla volta
     const ok = valida();
-    if (!$('#privacy').checked) {
-      $('#privacy').focus();
-      return;
+    if (!$('#privacy').checked) { $('#privacy').focus(); return; }
+    if (!ok) { $('.field.bad input, .field.bad textarea')?.focus(); return; }
+
+    // trappola antispam: solo un programma automatico spunta quella casella.
+    // Si finge riuscito, così il bot non riprova con un altro modulo.
+    if (form.botcheck.checked) { mostraConferma(); return; }
+
+    bottone.disabled = true;
+    bottone.textContent = 'Invio in corso…';
+    try {
+      const r = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id:  EMAILJS.servizio,
+          template_id: EMAILJS.template,
+          user_id:     EMAILJS.chiave,
+          template_params: {
+            nome:      $('#nome').value.trim(),
+            telefono:  $('#tel').value.trim(),
+            email:     $('#email').value.trim(),
+            servizio:  $('#tipo').value,
+            messaggio: $('#msg').value.trim()
+          }
+        })
+      });
+      // EmailJS risponde "OK" in testo semplice, non JSON
+      if (!r.ok) throw new Error(await r.text());
+      mostraConferma();
+    } catch (err) {
+      bottone.disabled = false;
+      bottone.innerHTML = etichetta;
+      errore.querySelector('span').textContent =
+        'Non siamo riusciti a inviare la richiesta. Riprova, oppure scrivici a omniwebsite.studio@gmail.com.';
+      errore.classList.add('show');
     }
-    if (!ok) {
-      $('.field.bad input, .field.bad textarea')?.focus();
-      return;
-    }
-    // ── Produzione: qui va la POST verso l'endpoint. Esempio:
-    // await fetch('/api/contatti', {method:'POST', body:new FormData(form)});
-    sent.classList.add('show');
-    form.querySelector('button[type=submit]').disabled = true;
-    sent.scrollIntoView({ block: 'nearest', behavior: calmo ? 'auto' : 'smooth' });
   });
+
+  function mostraConferma() {
+    sent.classList.add('show');
+    bottone.disabled = true;
+    bottone.textContent = 'Richiesta inviata';
+    sent.scrollIntoView({ block: 'nearest', behavior: calmo ? 'auto' : 'smooth' });
+  }
 })();
 </script>
 </body>
