@@ -496,6 +496,18 @@ h1{margin:22px 0 0}
   transition:transform .8s var(--ease)}
 .work:hover .work-img img{transform:scale(1.04)}
 .work-img.shot::after{display:none}   /* niente griglia sopra uno screenshot vero */
+a.work{display:block;color:inherit}
+.work-open{
+  position:absolute;top:14px;right:14px;z-index:2;
+  display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;
+  font-family:var(--font-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  background:rgba(7,7,12,.74);border:1px solid var(--line-hi);color:var(--fg);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:background .35s,color .35s,border-color .35s,transform .45s var(--ease);
+}
+.work-open svg{width:12px;height:12px}
+.work:hover .work-open{background:var(--grad);color:#07070C;border-color:transparent;transform:translateY(-2px)}
+.work:hover .work-open svg{color:#07070C}
 .work-ph{
   position:relative;z-index:1;font-family:var(--font-mono);font-size:12px;letter-spacing:.18em;
   text-transform:uppercase;color:rgba(255,255,255,.55);border:1px dashed rgba(255,255,255,.28);
@@ -979,35 +991,49 @@ footer .about{color:var(--fg-muted);font-size:.95rem;margin-top:16px;max-width:4
     </div>
 
     <div class="works stag">
-      <article class="work">
-        <!-- FOTO: sostituire il placeholder con <img src="..." loading="lazy" width height> -->
-        <div class="work-img"><span class="work-ph">Screenshot progetto</span></div>
+      <a class="work" href="demo/vetrina-chiara.html" target="_blank" rel="noopener">
+        <div class="work-img shot">
+          <img src="img/vetrina-chiara.jpg" width="1440" height="900" loading="lazy" decoding="async"
+               alt="Demo del template vetrina chiaro: titolo «L'impianto fatto bene, la prima volta» su fondo blu notte e crema" />
+          <span class="work-open">Apri la demo
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </span>
+        </div>
         <div class="work-body">
           <div>
-            <h3>Bertoldi Impianti</h3>
-            <p>Vetrina per un'impresa di impianti, con preventivo online.</p>
+            <h3>Vetrina PMI · versione chiara</h3>
+            <p>Navy e oro su neutri caldi, tono istituzionale. Stato di apertura in tempo reale,
+               gallery filtrabile, mappa che si carica solo su richiesta.</p>
           </div>
-          <div class="work-kpi">+38%<small>richieste</small></div>
-          <div class="work-tags"><i>Vetrina</i><i>SEO locale</i><i>1 settimana</i></div>
+          <div class="work-tags"><i>Modello</i><i>Navigabile</i><i>Movimento discreto</i></div>
         </div>
-      </article>
+      </a>
 
-      <article class="work">
-        <div class="work-img"><span class="work-ph">Screenshot progetto</span></div>
+      <a class="work" href="demo/vetrina-officina.html" target="_blank" rel="noopener">
+        <div class="work-img shot">
+          <img src="img/vetrina-officina.jpg" width="1440" height="900" loading="lazy" decoding="async"
+               alt="Demo del template vetrina officina: titolo condensato «Impianti fatti bene la prima volta» in arancio su fondo nero" />
+          <span class="work-open">Apri la demo
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </span>
+        </div>
         <div class="work-body">
           <div>
-            <h3>Marzia Ceramiche</h3>
-            <p>Negozio online di ceramica artigianale, 240 prodotti.</p>
+            <h3>Vetrina PMI · versione officina</h3>
+            <p>Stessa azienda, carattere opposto: fondo scuro, arancio sicurezza, titoli condensati
+               e molto movimento. Si mostra accanto alla chiara per far scegliere il tono.</p>
           </div>
-          <div class="work-kpi">2,4×<small>fatturato online</small></div>
-          <div class="work-tags"><i>E-commerce</i><i>Pagamenti</i><i>3 settimane</i></div>
+          <div class="work-tags"><i>Modello</i><i>Navigabile</i><i>Movimento alto</i></div>
         </div>
-      </article>
+      </a>
 
-      <article class="work big">
+      <a class="work big" href="https://omniscent.space" target="_blank" rel="noopener">
         <div class="work-img shot" style="aspect-ratio:21/9">
           <img src="img/omniscent-hero.jpg" width="1680" height="720" loading="lazy" decoding="async"
                alt="La home di omniscent.space: il titolo «a step forward» accanto al pannello della profondità di mercato EUR/USD" />
+          <span class="work-open">Apri il sito
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </span>
         </div>
         <div class="work-body">
           <div>
@@ -1019,7 +1045,7 @@ footer .about{color:var(--fg-muted);font-size:.95rem;margin-top:16px;max-width:4
           <div class="work-kpi">200+<small>studenti seguiti</small></div>
           <div class="work-tags"><i>Area riservata</i><i>Sala live</i><i>Prenotazioni</i><i>Italiano e inglese</i><i>Progetto interno</i></div>
         </div>
-      </article>
+      </a>
     </div>
   </div>
 </section>
