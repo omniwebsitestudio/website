@@ -1,0 +1,4 @@
+# Le demo dei template restano fuori dai motori di ricerca:
+# sono modelli di vendita, non pagine da posizionare.
+User-agent: *
+Disallow: /demo/
